@@ -1,0 +1,136 @@
+<html lang="en" class="h-full bg-gray-50">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WhatsApp Redirect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="h-full flex items-center justify-center p-6">
+  <div class="w-full max-w-sm bg-white rounded-lg shadow-md p-6">
+    <h1 class="text-2xl font-semibold text-center mb-6 text-green-600">
+      WhatsApp Redirect
+    </h1>
+    <form id="waForm" class="space-y-4">
+      <label for="phone" class="block text-gray-700 font-medium">
+        Enter WhatsApp Number
+      </label>
+      <div class="flex rounded-md shadow-sm border border-gray-300 overflow-hidden">
+        <span
+          id="countryCode"
+          class="inline-flex items-center px-3 bg-gray-100 text-gray-700 select-none text-sm"
+        >
+          +91
+        </span>
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          inputmode="tel"
+          pattern="[0-9]*"
+          placeholder="Enter mobile number"
+          class="flex-1 block w-full px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 sm:text-sm"
+          required
+          minlength="6"
+          maxlength="15"
+          autocomplete="tel"
+        />
+      </div>
+      <button
+        type="submit"
+        class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition-colors duration-200 flex items-center justify-center"
+      >
+        <i class="fab fa-whatsapp mr-2 text-lg"></i> Open WhatsApp Chat
+      </button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('waForm');
+    const phoneInput = document.getElementById('phone');
+    const countryCodeSpan = document.getElementById('countryCode');
+
+    // On focus, if user wants to edit country code, allow editing
+    countryCodeSpan.addEventListener('click', () => {
+      // Replace span with input for country code
+      const input = document.createElement('input');
+      input.type = 'tel';
+      input.inputMode = 'tel';
+      input.pattern = '[+0-9]*';
+      input.value = countryCodeSpan.textContent;
+      input.className =
+        'inline-flex items-center px-3 bg-gray-100 text-gray-700 text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500';
+      input.style.minWidth = '3.5rem';
+      input.id = 'countryCodeInput';
+
+      countryCodeSpan.replaceWith(input);
+      input.focus();
+
+      input.addEventListener('blur', () => {
+        let val = input.value.trim();
+        if (!val.startsWith('+')) {
+          val = '+' + val.replace(/[^0-9]/g, '');
+        } else {
+          val = '+' + val.replace(/[^0-9]/g, '');
+        }
+        if (val === '+') val = '+91';
+        const span = document.createElement('span');
+        span.id = 'countryCode';
+        span.className =
+          'inline-flex items-center px-3 bg-gray-100 text-gray-700 select-none text-sm';
+        span.textContent = val;
+        input.replaceWith(span);
+
+        // Reattach click listener
+        span.addEventListener('click', () => {
+          span.click();
+        });
+      });
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let countryCode = '+91';
+      const countryCodeInput = document.getElementById('countryCodeInput');
+      if (countryCodeInput) {
+        countryCode = countryCodeInput.value.trim();
+        if (!countryCode.startsWith('+')) {
+          countryCode = '+' + countryCode.replace(/[^0-9]/g, '');
+        } else {
+          countryCode = '+' + countryCode.replace(/[^0-9]/g, '');
+        }
+        if (countryCode === '+') countryCode = '+91';
+      } else {
+        countryCode = document.getElementById('countryCode').textContent.trim();
+      }
+
+      let phone = phoneInput.value.trim();
+      phone = phone.replace(/\D/g, '');
+
+      if (phone.length < 6) {
+        alert('Please enter a valid phone number with at least 6 digits.');
+        phoneInput.focus();
+        return;
+      }
+
+      // Remove the + from country code for wa.me link
+      const cc = countryCode.replace('+', '');
+
+      const waLink = `https://wa.me/${cc}${phone}`;
+      window.location.href = waLink;
+    });
+  </script>
+</body>
+</html>
