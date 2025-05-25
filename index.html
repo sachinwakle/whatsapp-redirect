@@ -128,7 +128,9 @@
       // Remove the + from country code for wa.me link
       const cc = countryCode.replace('+', '');
 
-      const waLink = `https://wa.me/${cc}${phone}`;
+      const message = encodeURIComponent("Hi");
+
+      const waLink = `https://wa.me/${cc}${phone}?text=${message}`;
       window.location.href = waLink;
     });
   </script>
